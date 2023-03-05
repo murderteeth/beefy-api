@@ -20,7 +20,7 @@ const {
 const ORACLE = 'tokens';
 const auraBalGauge = '0x00A7BA8Ae7bca0B10A32Ea1f8e2a1Da980c6CAd2';
 const DECIMALS = '1e18';
-const BLOCKS_PER_DAY = 28800;
+const SECONDS_PER_YEAR = 31_536_000;
 
 const getAuraBalApy = async () => {
   const [yearlyRewardsInUsd, totalStakedInUsd] = await Promise.all([
@@ -57,7 +57,7 @@ const getYearlyRewardsInUsd = async () => {
   const bbaUSDVirtualGauge = getContractWithProvider(IAuraGauge, bbaUSDVirtualGaugeAddress, web3);
   const bbaUSDRewardRate = new BigNumber(await bbaUSDVirtualGauge.methods.rewardRate().call());
   const auraData = await getAuraData();
-  const yearlyRewards = balRewardRate.times(3).times(BLOCKS_PER_DAY).times(365);
+  const yearlyRewards = balRewardRate.times(SECONDS_PER_YEAR);
 
   let auraYearlyRewards = yearlyRewards.times(auraData[0]).dividedBy(auraData[1]);
   // e.g. amtTillMax = 5e25 - 1e25 = 4e25
@@ -66,7 +66,7 @@ const getYearlyRewardsInUsd = async () => {
     auraYearlyRewards = auraData[2];
   }
 
-  let bbausdYearlyRewards = bbaUSDRewardRate.times(3).times(BLOCKS_PER_DAY).times(365);
+  let bbausdYearlyRewards = bbaUSDRewardRate.times(SECONDS_PER_YEAR);
 
   const balYearlyRewardsInUsd = yearlyRewards.times(balPrice).dividedBy(DECIMALS);
   const auraYearlyRewardsInUsd = auraYearlyRewards.times(auraPrice).dividedBy(DECIMALS);
